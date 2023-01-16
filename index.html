@@ -1,0 +1,31 @@
+<html>
+  <body>
+    <button id="mic-button" onclick="startRecording()">Connect to AI</button>
+    <script>
+      function startRecording() {
+        navigator.mediaDevices.getUserMedia({ audio: true })
+          .then(stream => {
+            const mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.start();
+            const audioChunks = [];
+            mediaRecorder.addEventListener("dataavailable", event => {
+              audioChunks.push(event.data);
+            });
+            mediaRecorder.addEventListener("stop", () => {
+              const audioBlob = new Blob(audioChunks);
+              fetch("/connect_to_ai", {
+                method: "POST",
+                body: audioBlob
+              }).then(response => response.text())
+              .then(data => {
+                console.log(data);
+              });
+            });
+            setTimeout(() => {
+              mediaRecorder.stop();
+            }, 3000);
+          });
+      }
+    </script>
+  </body>
+</html>
