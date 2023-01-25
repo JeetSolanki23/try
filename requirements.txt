@@ -1,4 +1,5 @@
 flask
 pyttsx3
 SpeechRecognition
+PyAudio
 gunicorn
